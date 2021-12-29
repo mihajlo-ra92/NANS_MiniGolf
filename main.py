@@ -12,8 +12,11 @@ while running:
     game.screen.fill(config.black)
     game.draw_walls()
     game.main_ball.update()
+    game.update_obs_balls()
     game.draw_main_ball()
     game.draw_obs_balls()
+    game.check_collision()
+    game.draw_aim_line()
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:

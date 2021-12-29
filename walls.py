@@ -17,6 +17,8 @@ class Walls():
         court_wall3 = np.array([[500, 85],[500+self.width,85],[500+self.width,600],[500,600]])
         court_wall4 = np.array([[330,700],[330+self.width,700],[330+self.width,200], [330, 200]])
 
+        
+
         #list of walls
         self.walls_list = [left_wall, right_wall, upper_wall, lower_left_wall, lower_right_wall, court_wall1, court_wall2, court_wall3, court_wall4]
 

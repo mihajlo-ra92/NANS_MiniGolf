@@ -1,0 +1,1 @@
+y-y1 = k*(x-x1) cu koristiti za koliziju zida i lopte msm
