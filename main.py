@@ -7,6 +7,7 @@ import walls
 
 game = game.Game()
 
+
 running = True
 while running:
     game.screen.fill(config.black)
