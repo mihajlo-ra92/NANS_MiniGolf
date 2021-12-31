@@ -1,1 +1,3 @@
-y-y1 = k*(x-x1) cu koristiti za koliziju zida i lopte msm
+materijali:
+https://www.jeffreythompson.org/collision-detection/line-circle.php
+https://www.jeffreythompson.org/collision-detection/line-point.php

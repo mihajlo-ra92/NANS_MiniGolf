@@ -3,6 +3,7 @@ import numpy as np
 from pygame import draw
 import config
 import ball
+import line
 import walls
 
 class Game:
@@ -56,27 +57,40 @@ class Game:
         for i in range(config.rectangle_number):
             pygame.draw.rect(self.screen, config.rectangle_colour, (config.rectangle_start[i], config.rectangle_size))
 
-
-
-    def check_collision_ball_wall(self):
-        #bice for loop koji prolazi kroz sve obs lopte
-        for wallIt in self.walls.walls_list:
-            #line: a*y = b*x + c
-            #vrv ce mi biti lakse da radim a*y + b*x + c = 0
-            if wallIt[1][0] - wallIt[0][0] != 0:
-                wallLineSlope = (wallIt[1][1] - wallIt[0][1]) / (wallIt[1][0] - wallIt[0][0]) #m = (y2 - y1)/(x2 - x1)
+    def create_line_form_points(self,point1, point2):
+        #line: a*y = b*x + c
+        if point1[0] - point2[0] != 0:
+                wallLineSlope = (point2[1] - point1[1]) / (point2[0] - point1[0]) #m = (y2 - y1)/(x2 - x1)
                 wallLineA = 1.0
-                wallLineB = wallLineSlope * (-1)
-                wallLineC = wallLineSlope * wallIt[1][0] - wallIt[1][1]
-            else:
-                wallLineA = 0
-                wallLineB = -1
-                wallLineC = wallIt[0][0]*(-1)
-            
-            distance = (abs(wallLineA * self.main_ball.pos[0]) + (wallLineB * self.main_ball.pos[1] + wallLineC) / np.sqrt(wallLineA**2 + wallLineB**2))
+                wallLineB = wallLineSlope
+                wallLineC = (-1) * wallLineSlope * point2[0] + point2[1]
+        else:
+            wallLineA = 0
+            wallLineB = -1
+            wallLineC = point1[0]
+        return wallLineA, wallLineB, wallLineC
 
-            if self.main_ball.radius <= distance:
-                self.main_ball.velocity = np.array([0.0, 0.0])
+    def check_collision_main_ball_wall(self):
+        #bice for loop koji prolazi kroz sve obs lopte
+        # lin = []
+        # for wallIt in self.walls.walls_list:
+        #     for i in range(3):
+        #         lin[i] = self.create_line_form_points(wallIt[i], wallIt[i+1])
+        #     lin [3] = self.create_line_form_points(wallIt[3],wallIt[0])
+            
+        p1Lin = np.array([15, 0])
+        p2Lin = np.array([15, 700])
+        linLen = line.lineLenght(p1Lin, p2Lin)
+        dot = ((self.main_ball.pos[0] - p1Lin[0])*(p2Lin[0] - p1Lin[0]) + (self.main_ball.pos[1] - p1Lin[1])*(p2Lin[1] - p1Lin[1])) / linLen**2
+        closestX, closestY = line.findClosest(dot, p1Lin, p2Lin) #nz da li ovo ispradne np.array ili tuple pa sam za sad stavio ovako
+        closest = np.array([closestX, closestY])
+        if line.pointOnLine(closest, p1Lin, p2Lin) != True:
+            return False
+        circleLineDist = line.lineLenght(self.main_ball.pos, closest)
+        if circleLineDist <= self.main_ball.radius:
+            #print('KOLIZIJAKOLIZIJAKOLIZIJAKOLIZIJAKOLIZIJAKOLIZIJAKOLIZIJAKOLIZIJAKOLIZIJAKOLIZIJAKOLIZIJAKOLIZIJA')
+            self.main_ball.velocity[0] *= (-1)
+            self.main_ball.update()
 
     #posle mozda stavim AABB(axis-aligned bounding box) check da ih ne poredi ako nisu ni blizu
     def check_collision_main_ball_obs_ball(self):
@@ -199,6 +213,7 @@ class Game:
         #                 self.balls_collision_response(ballIt1, ballIt2)
         self.check_collision_main_ball_obs_ball()
         self.check_collision_obs_ball_obs_ball()
+        self.check_collision_main_ball_wall()
 
 
     #this function only calculates the force applyed by our mouse
