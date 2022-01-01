@@ -10,7 +10,7 @@ blue = (0, 0, 255)
 
 #movement constants
 friction_coef = 0.997
-min_velocity = 0.03
+min_velocity = 0.09
 
 #ball constants
 ball_colour = white

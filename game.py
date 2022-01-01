@@ -77,20 +77,72 @@ class Game:
         #     for i in range(3):
         #         lin[i] = self.create_line_form_points(wallIt[i], wallIt[i+1])
         #     lin [3] = self.create_line_form_points(wallIt[3],wallIt[0])
-            
-        p1Lin = np.array([15, 0])
-        p2Lin = np.array([15, 700])
-        linLen = line.lineLenght(p1Lin, p2Lin)
-        dot = ((self.main_ball.pos[0] - p1Lin[0])*(p2Lin[0] - p1Lin[0]) + (self.main_ball.pos[1] - p1Lin[1])*(p2Lin[1] - p1Lin[1])) / linLen**2
-        closestX, closestY = line.findClosest(dot, p1Lin, p2Lin) #nz da li ovo ispradne np.array ili tuple pa sam za sad stavio ovako
-        closest = np.array([closestX, closestY])
-        if line.pointOnLine(closest, p1Lin, p2Lin) != True:
-            return False
-        circleLineDist = line.lineLenght(self.main_ball.pos, closest)
-        if circleLineDist <= self.main_ball.radius:
-            #print('KOLIZIJAKOLIZIJAKOLIZIJAKOLIZIJAKOLIZIJAKOLIZIJAKOLIZIJAKOLIZIJAKOLIZIJAKOLIZIJAKOLIZIJAKOLIZIJA')
-            self.main_ball.velocity[0] *= (-1)
-            self.main_ball.update()
+
+
+        for wallIt in self.walls.walls_list:
+
+            for i in range(4):
+                p1Lin = wallIt[i]
+
+                if i == 3:
+                    p2Lin = wallIt[0]
+                else:
+                    p2Lin = wallIt[i+1]
+
+
+                # p1Lin = np.array([15, 0])
+                # p2Lin = np.array([15, 700])
+                if p1Lin[0] == p2Lin[0]:
+                    linLen = line.lineLenght(p1Lin, p2Lin)
+                    dot = ((self.main_ball.pos[0] - p1Lin[0])*(p2Lin[0] - p1Lin[0]) + (self.main_ball.pos[1] - p1Lin[1])*(p2Lin[1] - p1Lin[1])) / linLen**2
+                    closestX, closestY = line.findClosest(dot, p1Lin, p2Lin) #nz da li ovo ispradne np.array ili tuple pa sam za sad stavio ovako
+                    closest = np.array([closestX, closestY])
+                    if line.pointOnLine(closest, p1Lin, p2Lin) == True:
+                        circleLineDist = line.lineLenght(self.main_ball.pos, closest)
+                        if circleLineDist <= self.main_ball.radius:
+                            self.main_ball.velocity[0] *= (-1)
+                            self.main_ball.update()
+
+                    for obsBallIt in self.obs_balls:
+                        dot = ((obsBallIt.pos[0] - p1Lin[0])*(p2Lin[0] - p1Lin[0]) + (obsBallIt.pos[1] - p1Lin[1])*(p2Lin[1] - p1Lin[1])) / linLen**2
+                        closestX, closestY = line.findClosest(dot, p1Lin, p2Lin) #nz da li ovo ispradne np.array ili tuple pa sam za sad stavio ovako
+                        closest = np.array([closestX, closestY])
+                        if line.pointOnLine(closest, p1Lin, p2Lin) == True:
+                            circleLineDist = line.lineLenght(obsBallIt.pos, closest)
+                            if circleLineDist <= obsBallIt.radius:
+                                obsBallIt.velocity[0] *= (-1)
+                                obsBallIt.update()
+                            
+                    
+                    # if line.pointOnLine(closest, p1Lin, p2Lin) != True:
+                    #     return False
+                    # circleLineDist = line.lineLenght(self.main_ball.pos, closest)
+                    # if circleLineDist <= self.main_ball.radius:
+                    #     self.main_ball.velocity[0] *= (-1)
+                    #     self.main_ball.update()
+                    #     return True
+
+                if p1Lin[1] == p2Lin[1]:
+                    linLen = line.lineLenght(p1Lin, p2Lin)
+                    dot = ((self.main_ball.pos[0] - p1Lin[0])*(p2Lin[0] - p1Lin[0]) + (self.main_ball.pos[1] - p1Lin[1])*(p2Lin[1] - p1Lin[1])) / linLen**2
+                    closestX, closestY = line.findClosest(dot, p1Lin, p2Lin) #nz da li ovo ispradne np.array ili tuple pa sam za sad stavio ovako
+                    closest = np.array([closestX, closestY])
+                    if line.pointOnLine(closest, p1Lin, p2Lin) == True:
+                        
+                        circleLineDist = line.lineLenght(self.main_ball.pos, closest)
+                        if circleLineDist <= self.main_ball.radius:
+                            self.main_ball.velocity[1] *= (-1)
+                            self.main_ball.update()
+                        
+                    for obsBallIt in self.obs_balls:
+                        dot = ((obsBallIt.pos[0] - p1Lin[0])*(p2Lin[0] - p1Lin[0]) + (obsBallIt.pos[1] - p1Lin[1])*(p2Lin[1] - p1Lin[1])) / linLen**2
+                        closestX, closestY = line.findClosest(dot, p1Lin, p2Lin) #nz da li ovo ispradne np.array ili tuple pa sam za sad stavio ovako
+                        closest = np.array([closestX, closestY])
+                        if line.pointOnLine(closest, p1Lin, p2Lin) == True:
+                            circleLineDist = line.lineLenght(obsBallIt.pos, closest)
+                            if circleLineDist <= obsBallIt.radius:
+                                obsBallIt.velocity[1] *= (-1)
+                                obsBallIt.update()
 
     #posle mozda stavim AABB(axis-aligned bounding box) check da ih ne poredi ako nisu ni blizu
     def check_collision_main_ball_obs_ball(self):
