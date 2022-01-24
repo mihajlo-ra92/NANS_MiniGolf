@@ -5,6 +5,7 @@ import config
 import ball
 import line
 import walls
+import square
 
 class Game:
     def __init__(self):
@@ -16,6 +17,7 @@ class Game:
         self.screen.fill(config.black)
 
         self.main_ball = ball.Ball(True)
+        self.squares = self.create_squares()
         self.walls = walls.Walls()
         self.obs_balls, self.all_balls = self.create_obs_and_all_balls()
         self.mouse_down = np.array([0.0, 0.0])
@@ -27,6 +29,7 @@ class Game:
         pygame.display.set_caption("Mini golf")
         icon = pygame.image.load('golf.png')
         pygame.display.set_icon(icon)
+
 
     def draw_walls(self):
         for i in range(self.walls.walls_number):
@@ -48,10 +51,20 @@ class Game:
         all_balls.append(self.main_ball)
         return obs_balls, all_balls
 
+    def create_squares(self):
+        squares = []
+        for i in range(config.squares_number):
+            squares.append(square.Square(config.squares_centers[i]))
+        return squares
+
     
     def draw_obs_balls(self):
         for i in range(config.obs_balls_number):
             pygame.draw.circle(self.screen, config.obs_ball_colour, self.obs_balls[i].pos, self.obs_balls[i].radius)
+    
+    def draw_squares(self):
+        for i in range(config.squares_number):
+            pygame.draw.polygon(self.screen, config.blue, self.squares[i].points)
 
     def draw_rectangle(self):
         for i in range(config.rectangle_number):
@@ -288,3 +301,7 @@ class Game:
     def update_obs_balls(self):
         for ballIt in self.obs_balls:
             ballIt.update()
+
+    def update_squares(self):
+        for squareIt in self.squares:
+            squareIt.update()

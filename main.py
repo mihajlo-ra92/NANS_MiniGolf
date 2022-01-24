@@ -14,7 +14,9 @@ while running:
     game.draw_walls()
     game.main_ball.update()
     game.update_obs_balls()
+    game.update_squares()
     game.draw_main_ball()
+    game.draw_squares()
     game.draw_obs_balls()
     game.check_collision()
     game.draw_aim_line()
@@ -32,6 +34,13 @@ while running:
                 game.main_ball_clicked = True
             print(game.mouse_down)
 
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 3:#3 znaci desni klik
+            print("desni klik")
+            game.read_mouse_down(pygame.mouse.get_pos())
+            game.main_ball.pos[0] = game.mouse_down[0]
+            game.main_ball.pos[1] = game.mouse_down[1]
+            game.main_ball.velocity[0] = 0.0
+            game.main_ball.velocity[1] = 0.0
 
         if event.type == pygame.MOUSEBUTTONUP:  
             #reading the cordinates of where the mouse is unpressed
