@@ -1,3 +1,5 @@
 materijali:
 https://www.jeffreythompson.org/collision-detection/line-circle.php
 https://www.jeffreythompson.org/collision-detection/line-point.php
+https://www.youtube.com/watch?v=Zgf1DYrmSnk&t=150s
+https://www.youtube.com/watch?v=vWs33LVrs74
