@@ -1,5 +1,6 @@
 from math import sqrt
-from dis import dis
+import pygame
+import config
 import numpy as np
 import sys
 def sat_two_polygons(verticies1, verticies2):
@@ -39,50 +40,62 @@ def project_vetricies(vetricies, axis):
         v = vetricies[i]
         #projection is dot product of vetrices and axis
         proj = dot(v,axis)
+        # projection = np.array([0.0, 0.0])
+        # projection[0] = (v[0] * axis[0] + v[1] * axis[1]) / (axis[0] ** 2 + axis[1] ** 2) * axis[0]
+        # projection[1] = (v[0] * axis[0] + v[1] * axis[1]) / (axis[0] ** 2 + axis[1] ** 2) * axis[1]
+        # distance_on_line = np.sqrt(projection[0] ** 2 + projection[1] ** 2)
+        # if (projection[0] + projection[1] < 0):
+        #     distance_on_line = -distance_on_line
         if proj < min:
             min = proj
         if proj > max:
             max = proj
+
+        # if distance_on_line < min:
+        #     min = distance_on_line
+        # if distance_on_line > max:
+        #     max = distance_on_line
     
     return min, max
 
-def sat_polygon_circle(circle_center, circle_radius, verticies):
+def sat_polygon_circle(circle, polygon):
 
-    normal = np.array([0.0, 0.0])
-    depth = sys.maxsize
-    for i in range(len(verticies)):
-        vector_a = verticies[i]
+    position_diff = np.array([circle.pos[0], polygon.center[0], circle.pos[1], polygon.center[1]])
+    min_distance = sys.maxsize
+    for i in range(len(polygon.points)):
+        vector_a = polygon.points[i]
         #%len(points1) is for the last iteration so we dont go out of range
         #and we create an edge from the last and the first point
-        vector_b = verticies[(i + 1) % len(verticies)]
+        vector_b = polygon.points[(i + 1) % len(polygon.points)]
         edge = np.array([0.0, 0.0])
         edge[0] = vector_b[0] - vector_a[0]
         edge[1] = vector_b[1] - vector_a[1]
         axis = np.array([edge[1], -edge[0]])
-        min1, max1 = project_vetricies(verticies, axis)
-        min2, max2 = project_circle(circle_center, circle_radius, axis)
+        min1, max1 = project_vetricies(polygon.points, axis)
+        min2, max2 = project_circle(circle, axis)
         if min1 >= max2 or min2 >= max1:
             return False
 
 
-    closest_point = find_closest_point_of_polygon(circle_center, verticies)
-    axis = verticies[closest_point] - circle_center
-    min1, max1 = project_vetricies(verticies, axis)
-    min2, max2 = project_circle(circle_center, circle_radius, axis)
+    closest_point = find_closest_point_of_polygon(circle.pos, polygon.points)
+    axis = polygon.points[closest_point] - circle.pos
+    min1, max1 = project_vetricies(polygon.points, axis)
+    min2, max2 = project_circle(circle, axis)
     if min1 >= max2 or min2 >= max1:
         return False
 
+
     return True
 
-def project_circle(circle_center, circle_radius, axis):
+def project_circle(circle, axis):
 
     norm = sqrt(axis[0] ** 2 + axis[1] ** 2)
     axis_normalised = np.array([0.0, 0.0])
     axis_normalised[0] = axis[0] / norm
     axis_normalised[1] = axis[1] / norm
     #we used the normalised axis multiplied by the radius to find the "edges" of the circle
-    point1 = circle_center - axis_normalised * circle_radius
-    point2 = circle_center + axis_normalised * circle_radius
+    point1 = circle.pos - axis_normalised * circle.radius
+    point2 = circle.pos + axis_normalised * circle.radius
     #we use dot products to find min and max value
     min = dot(point1, axis)
     max = dot(point2, axis)
@@ -91,7 +104,6 @@ def project_circle(circle_center, circle_radius, axis):
         temp = min
         min = max
         max = temp
-
     return min, max
 
 def dot(value1, value2):

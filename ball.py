@@ -8,9 +8,12 @@ class Ball():
         self.pos = pos
         self.velocity = np.array([0.0, 0.0])
         self.start = np.array([50.0, 650.0])
-        self.mass = 10.0
-        self.radius = 20.0
         self.is_main = is_main
+        if(is_main):
+            self.mass = 10.0
+        else:
+            self.mass = 1.0
+        self.radius = 10.0
     
     #gets force, turns it into velocity
     def apply_force(self, force, time = 1):

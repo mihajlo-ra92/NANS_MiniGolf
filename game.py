@@ -83,7 +83,7 @@ class Game:
             wallLineC = point1[0]
         return wallLineA, wallLineB, wallLineC
 
-    def check_collision_main_ball_wall(self):
+    def check_collision_ball_wall(self):
         #bice for loop koji prolazi kroz sve obs lopte
         # lin = []
         # for wallIt in self.walls.walls_list:
@@ -165,44 +165,50 @@ class Game:
             distY = self.main_ball.pos[1] - ballIt.pos[1]
             distance = np.sqrt( distX**2 + distY**2)
             if distance <= self.main_ball.radius + ballIt.radius:
-                # self.main_ball.velocity = np.array([0.0, 0.0])
-                # ballIt.velocity = np.array([0.0, 0.0])
                 
-                #normale
-                nx = (self.main_ball.pos[0] - ballIt.pos[0]) / distance
-                ny = (self.main_ball.pos[1] - ballIt.pos[1]) / distance
-                #tangente
-                tx = -ny
-                ty = nx
+                # #normale
+                # nx = (self.main_ball.pos[0] - ballIt.pos[0]) / distance
+                # ny = (self.main_ball.pos[1] - ballIt.pos[1]) / distance
+                # #tangente
+                # tx = -ny
+                # ty = nx
 
-                dpTan1 = self.main_ball.velocity[0] * tx + self.main_ball.velocity[1] * ty
-                dpTan2 = ballIt.velocity[0] * tx + ballIt.velocity[1] * ty
+                # dpTan1 = self.main_ball.velocity[0] * tx + self.main_ball.velocity[1] * ty
+                # dpTan2 = ballIt.velocity[0] * tx + ballIt.velocity[1] * ty
 
-                dpNorm1 = self.main_ball.velocity[0] * nx + self.main_ball.velocity[1] * ny
-                dpNorm2 = ballIt.velocity[0] * nx + ballIt.velocity[1] * ny
+                # dpNorm1 = self.main_ball.velocity[0] * nx + self.main_ball.velocity[1] * ny
+                # dpNorm2 = ballIt.velocity[0] * nx + ballIt.velocity[1] * ny
 
-                m1 = (dpNorm1 * (self.main_ball.mass - ballIt.mass) + 2 * ballIt.mass * dpNorm2) / (self.main_ball.mass + ballIt.mass)
-                m2 = (dpNorm2 * (ballIt.mass - self.main_ball.mass) + 2 * self.main_ball.mass * dpNorm1) / (self.main_ball.mass + ballIt.mass)
+                # m1 = (dpNorm1 * (self.main_ball.mass - ballIt.mass) + 2 * ballIt.mass * dpNorm2) / (self.main_ball.mass + ballIt.mass)
+                # m2 = (dpNorm2 * (ballIt.mass - self.main_ball.mass) + 2 * self.main_ball.mass * dpNorm1) / (self.main_ball.mass + ballIt.mass)
 
-                self.main_ball.velocity[0] = tx * dpTan1 + nx * m1
-                self.main_ball.velocity[1] = ty * dpTan1 + ny * m1
-                ballIt.velocity[0] = tx * dpTan2 + nx * m2
-                ballIt.velocity[1] = ty * dpTan2 + ny * m2
-
-                # p = 2 * (self.main_ball.velocity[0] * nx + self.main_ball.velocity[1] * ny - 
-                # ballIt.velocity[0] * nx - ballIt.velocity[1] * ny) /(self.main_ball.mass + ballIt.mass)
-
-                # self.main_ball.velocity[0] -= p * self.main_ball.mass * nx
-                # self.main_ball.velocity[1] -= p * self.main_ball.mass * ny
-                # ballIt.velocity[0] -= p * ballIt.mass * nx
-                # ballIt.velocity[1] -= p * ballIt.mass * ny
-
-                # self.main_ball.velocity[0] = (self.main_ball.velocity[0] * (self.main_ball.mass - ballIt.mass) + (2 * ballIt.mass * ballIt.velocity[0])) / (self.main_ball.mass + ballIt.mass)
-                # self.main_ball.velocity[1] = (self.main_ball.velocity[1] * (self.main_ball.mass - ballIt.mass) + (2 * ballIt.mass * ballIt.velocity[1])) / (self.main_ball.mass + ballIt.mass)
-                # ballIt.velocity[0] = (ballIt.velocity[0] * (ballIt.mass - self.main_ball.mass) + (2 * self.main_ball.mass * ballIt.velocity[0])) / (self.main_ball.mass + ballIt.mass)
-                # ballIt.velocity[1] = (ballIt.velocity[1] * (ballIt.mass - self.main_ball.mass) + (2 * self.main_ball.mass * ballIt.velocity[1])) / (self.main_ball.mass + ballIt.mass)
+                # self.main_ball.velocity[0] = tx * dpTan1 + nx * m1
+                # self.main_ball.velocity[1] = ty * dpTan1 + ny * m1
+                # ballIt.velocity[0] = tx * dpTan2 + nx * m2
+                # ballIt.velocity[1] = ty * dpTan2 + ny * m2
                 
-                print(f'mainVelX = {self.main_ball.velocity[0]}\nmainVelY = {self.main_ball.velocity[1]}\nobsVelX = {ballIt.velocity[0]}\nobsVelY = {ballIt.velocity[1]}\n')
+                #the code above is not very good, somethimes the balls get stuck in eachother
+                radiuses = self.main_ball.radius + ballIt.radius
+                colision_distance = distance - radiuses
+
+                collision_point_main_ball = np.array([0.0, 0.0])
+                collision_point_main_ball[0] = (ballIt.pos[0] - self.main_ball.pos[0]) / distance * self.main_ball.radius
+                collision_point_main_ball[1] = (ballIt.pos[1] - self.main_ball.pos[1]) / distance * self.main_ball.radius
+                
+                collision_point_ball_it = np.array([0.0, 0.0])
+                collision_point_ball_it[0] = (self.main_ball.pos[0] - ballIt.pos[0]) / distance * ballIt.radius
+                collision_point_ball_it[1] = (self.main_ball.pos[1] - ballIt.pos[1]) / distance * ballIt.radius
+
+                reaction_vector_main_ball = np.array([0.0, 0.0])
+                reaction_vector_main_ball[0] = (ballIt.pos[0] - self.main_ball.pos[0]) - collision_point_main_ball[0] + collision_point_ball_it[0]
+                reaction_vector_main_ball[1] = (ballIt.pos[1] - self.main_ball.pos[1]) - collision_point_main_ball[1] + collision_point_ball_it[1]
+                reaction_vector_ball_it = np.array([0.0, 0.0])
+                reaction_vector_ball_it[0] = (self.main_ball.pos[0] - ballIt.pos[0] ) - collision_point_ball_it[0] + collision_point_main_ball[0]
+                reaction_vector_ball_it[1] = (self.main_ball.pos[1] - ballIt.pos[1] ) - collision_point_ball_it[1] + collision_point_main_ball[1]
+
+                self.main_ball.velocity = reaction_vector_main_ball
+                ballIt.velocity = reaction_vector_ball_it
+                self.update_obs_balls()
 
     def check_collision_obs_ball_obs_ball(self):
         for ballIt1 in self.obs_balls:
@@ -211,74 +217,59 @@ class Game:
                     distX = ballIt1.pos[0] - ballIt2.pos[0]
                     distY = ballIt1.pos[1] - ballIt2.pos[1]
                     distance = np.sqrt( distX**2 + distY**2)
-                    if distance <= ballIt1.radius + ballIt2.radius:   
-                        # print('OBS BALL KOLIZIJA')                     
-                        #normale
-                        nx = (ballIt1.pos[0] - ballIt2.pos[0]) / distance
-                        ny = (ballIt1.pos[1] - ballIt2.pos[1]) / distance
-                        #tangente
-                        tx = -ny
-                        ty = nx
+                    if distance <= ballIt1.radius + ballIt2.radius:      
+                        # #normale
+                        # nx = (ballIt1.pos[0] - ballIt2.pos[0]) / distance
+                        # ny = (ballIt1.pos[1] - ballIt2.pos[1]) / distance
+                        # #tangente
+                        # tx = -ny
+                        # ty = nx
 
-                        dpTan1 = ballIt1.velocity[0] * tx + ballIt1.velocity[1] * ty
-                        dpTan2 = ballIt2.velocity[0] * tx + ballIt2.velocity[1] * ty
+                        # dpTan1 = ballIt1.velocity[0] * tx + ballIt1.velocity[1] * ty
+                        # dpTan2 = ballIt2.velocity[0] * tx + ballIt2.velocity[1] * ty
 
-                        dpNorm1 = ballIt1.velocity[0] * nx + ballIt1.velocity[1] * ny
-                        dpNorm2 = ballIt2.velocity[0] * nx + ballIt2.velocity[1] * ny
+                        # dpNorm1 = ballIt1.velocity[0] * nx + ballIt1.velocity[1] * ny
+                        # dpNorm2 = ballIt2.velocity[0] * nx + ballIt2.velocity[1] * ny
 
-                        m1 = (dpNorm1 * (ballIt1.mass - ballIt2.mass) + 2 * ballIt2.mass * dpNorm2) / (ballIt1.mass + ballIt2.mass)
-                        m2 = (dpNorm2 * (ballIt2.mass - ballIt1.mass) + 2 * ballIt1.mass * dpNorm1) / (ballIt1.mass + ballIt2.mass)
+                        # m1 = (dpNorm1 * (ballIt1.mass - ballIt2.mass) + 2 * ballIt2.mass * dpNorm2) / (ballIt1.mass + ballIt2.mass)
+                        # m2 = (dpNorm2 * (ballIt2.mass - ballIt1.mass) + 2 * ballIt1.mass * dpNorm1) / (ballIt1.mass + ballIt2.mass)
 
-                        ballIt1.velocity[0] = tx * dpTan1 + nx * m1
-                        ballIt1.velocity[1] = ty * dpTan1 + ny * m1
-                        ballIt2.velocity[0] = tx * dpTan2 + nx * m2
-                        ballIt2.velocity[1] = ty * dpTan2 + ny * m2
+                        # ballIt1.velocity[0] = tx * dpTan1 + nx * m1
+                        # ballIt1.velocity[1] = ty * dpTan1 + ny * m1
+                        # ballIt2.velocity[0] = tx * dpTan2 + nx * m2
+                        # ballIt2.velocity[1] = ty * dpTan2 + ny * m2
+                        # self.update_obs_balls()
+
+                        radiuses = ballIt1.radius + ballIt2.radius
+                        colision_distance = distance - radiuses
+
+                        collision_point_ball1 = np.array([0.0, 0.0])
+                        collision_point_ball1[0] = (ballIt2.pos[0] - ballIt1.pos[0]) / distance * ballIt1.radius
+                        collision_point_ball1[1] = (ballIt2.pos[1] - ballIt1.pos[1]) / distance * ballIt1.radius
+                        
+                        collision_point_ball2 = np.array([0.0, 0.0])
+                        collision_point_ball2[0] = (ballIt1.pos[0] - ballIt2.pos[0]) / distance * ballIt2.radius
+                        collision_point_ball2[1] = (ballIt1.pos[1] - ballIt2.pos[1]) / distance * ballIt2.radius
+
+                        reaction_vector_ball1 = np.array([0.0, 0.0])
+                        reaction_vector_ball1[0] = (ballIt2.pos[0] - ballIt1.pos[0]) - collision_point_ball1[0] + collision_point_ball2[0]
+                        reaction_vector_ball1[1] = (ballIt2.pos[1] - ballIt1.pos[1]) - collision_point_ball1[1] + collision_point_ball2[1]
+                        reaction_vector_ball2 = np.array([0.0, 0.0])
+                        reaction_vector_ball2[0] = (ballIt1.pos[0] - ballIt2.pos[0] ) - collision_point_ball2[0] + collision_point_ball1[0]
+                        reaction_vector_ball2[1] = (ballIt1.pos[1] - ballIt2.pos[1] ) - collision_point_ball2[1] + collision_point_ball1[1]
+
+                        ballIt1.velocity = reaction_vector_ball1
+                        ballIt2.velocity = reaction_vector_ball2
                         self.update_obs_balls()
-                        print(f'ball1VectorX: {ballIt1.velocity[0]}\nball1VectorY{ballIt1.velocity[1]}')
 
-    def balls_collision_response(self, ball1, ball2):
-        distX = ball1.pos[0] - ball2.pos[0]
-        distY = ball1.pos[1] - ball2.pos[1]
-        distance = np.sqrt( distX**2 + distY**2)
-
-        #normale
-        nx = (ball1.pos[0] - ball2.pos[0]) / distance
-        ny = (ball1.pos[1] - ball2.pos[1]) / distance
-        #tangente
-        tx = -ny
-        ty = nx
-
-        dpTan1 = ball1.velocity[0] * tx + ball1.velocity[1] * ty
-        dpTan2 = ball2.velocity[0] * tx + ball2.velocity[1] * ty
-
-        dpNorm1 = ball1.velocity[0] * nx + ball1.velocity[1] * ny
-        dpNorm2 = ball2.velocity[0] * nx + ball2.velocity[1] * ny
-
-        m1 = (dpNorm1 * (ball1.mass - ball2.mass) + 2 * ball2.mass * dpNorm2) / (ball1.mass + ball2.mass)
-        m2 = (dpNorm2 * (ball2.mass - ball1.mass) + 2 * ball1.mass * dpNorm1) / (ball1.mass + ball2.mass)
-
-        ball1.velocity[0] = tx * dpTan1 + nx * m1
-        ball1.velocity[1] = ty * dpTan1 + ny * m1
-        ball2.velocity[0] = tx * dpTan2 + nx * m2
-        ball2.velocity[1] = ty * dpTan2 + ny * m2
-
-        self.update_obs_balls()
-        self.main_ball.update()
+   
 
 
     def check_collision(self):
-        # for ballIt1 in self.obs_balls:
-        #     for ballIt2 in self.obs_balls:
-        #         if ballIt1 != ballIt2:
-        #             distX = ballIt1.pos[0] - ballIt2.pos[0]
-        #             distY = ballIt1.pos[1] - ballIt2.pos[1]
-        #             distance = np.sqrt( distX**2 + distY**2)
-        #             if distance <= ballIt1.radius + ballIt2.radius:
-        #                 print('KOLIZIJA')
-        #                 self.balls_collision_response(ballIt1, ballIt2)
         self.check_collision_main_ball_obs_ball()
         self.check_collision_obs_ball_obs_ball()
-        self.check_collision_main_ball_wall()
+        self.check_collision_ball_wall()
+        # self.che
 
 
     #this function only calculates the force applyed by our mouse

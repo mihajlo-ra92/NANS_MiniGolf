@@ -6,7 +6,7 @@ class Square():
         self.center = center
         self.points = np.array([[self.center[0] - config.square_width, self.center[1] - config.square_width],[self.center[0] - config.square_width, self.center[1] + config.square_width],[self.center[0] + config.square_width, self.center[1] + config.square_width],[self.center[0] + config.square_width, self.center[1] - config.square_width]])
         self.angle = 0.0 #in degrees
-        self.angular_velocity = 0.3
+        self.angular_velocity = 0.6
         self.velocity = np.array([0.0, 0.0])
         self.mass = 10.0
 
@@ -15,7 +15,7 @@ class Square():
         self.center += self.velocity
         # as we move the center, we must move the points with it
         self.points = np.array([[self.center[0] - config.square_width, self.center[1] - config.square_width],[self.center[0] - config.square_width, self.center[1] + config.square_width],[self.center[0] + config.square_width, self.center[1] + config.square_width],[self.center[0] + config.square_width, self.center[1] - config.square_width]])
-        # self.angular_velocity *= config.friction_coef
+        self.angular_velocity *= config.friction_coef
         self.angle += self.angular_velocity
         self.rotate()
         if (self.angular_velocity < config.min_velocity):
