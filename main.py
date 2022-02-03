@@ -22,12 +22,12 @@ while running:
     game.check_collision()
     game.draw_aim_line()
 
+    is_col,nista, nista = sat.sat_two_polygons(game.squares[0].points, game.squares[1].points)
+    if is_col:
+        print("DODIR")
 
-    # if sat.sat_two_polygons(game.squares[0].points, game.squares[1].points):
-    #     print("DODIR")
-
-    # if sat.sat_polygon_circle(game.main_ball, game.squares[0]):
-    #     print("DODIR")
+    if sat.sat_polygon_circle(game.main_ball, game.squares[0]):
+        print("DODIR")
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -45,12 +45,12 @@ while running:
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 3:#3 znaci desni klik
             print("desni klik")
             game.read_mouse_down(pygame.mouse.get_pos())
-            game.main_ball.pos[0] = game.mouse_down[0]
-            game.main_ball.pos[1] = game.mouse_down[1]
-            game.main_ball.velocity[0] = 0.0
-            game.main_ball.velocity[1] = 0.0
-            # game.squares[0].center[0] = game.mouse_down[0]
-            # game.squares[0].center[1] = game.mouse_down[1]
+            # game.main_ball.pos[0] = game.mouse_down[0]
+            # game.main_ball.pos[1] = game.mouse_down[1]
+            # game.main_ball.velocity[0] = 0.0
+            # game.main_ball.velocity[1] = 0.0
+            game.squares[0].center[0] = game.mouse_down[0]
+            game.squares[0].center[1] = game.mouse_down[1]
 
         if event.type == pygame.MOUSEBUTTONUP:  
             #reading the cordinates of where the mouse is unpressed

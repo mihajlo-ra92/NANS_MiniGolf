@@ -4,8 +4,10 @@ from pygame import draw
 import config
 import ball
 import line
+from sat import sat_two_polygons
 import walls
 import square
+import sys
 
 class Game:
     def __init__(self):
@@ -166,28 +168,6 @@ class Game:
             distance = np.sqrt( distX**2 + distY**2)
             if distance <= self.main_ball.radius + ballIt.radius:
                 
-                # #normale
-                # nx = (self.main_ball.pos[0] - ballIt.pos[0]) / distance
-                # ny = (self.main_ball.pos[1] - ballIt.pos[1]) / distance
-                # #tangente
-                # tx = -ny
-                # ty = nx
-
-                # dpTan1 = self.main_ball.velocity[0] * tx + self.main_ball.velocity[1] * ty
-                # dpTan2 = ballIt.velocity[0] * tx + ballIt.velocity[1] * ty
-
-                # dpNorm1 = self.main_ball.velocity[0] * nx + self.main_ball.velocity[1] * ny
-                # dpNorm2 = ballIt.velocity[0] * nx + ballIt.velocity[1] * ny
-
-                # m1 = (dpNorm1 * (self.main_ball.mass - ballIt.mass) + 2 * ballIt.mass * dpNorm2) / (self.main_ball.mass + ballIt.mass)
-                # m2 = (dpNorm2 * (ballIt.mass - self.main_ball.mass) + 2 * self.main_ball.mass * dpNorm1) / (self.main_ball.mass + ballIt.mass)
-
-                # self.main_ball.velocity[0] = tx * dpTan1 + nx * m1
-                # self.main_ball.velocity[1] = ty * dpTan1 + ny * m1
-                # ballIt.velocity[0] = tx * dpTan2 + nx * m2
-                # ballIt.velocity[1] = ty * dpTan2 + ny * m2
-                
-                #the code above is not very good, somethimes the balls get stuck in eachother
                 radiuses = self.main_ball.radius + ballIt.radius
                 colision_distance = distance - radiuses
 
@@ -263,13 +243,21 @@ class Game:
                         self.update_obs_balls()
 
    
+    def check_collision_main_ball_square(self):
+       pass
 
+    def check_collision_sqares(self):
+        is_col, norm, depth = sat_two_polygons(self.squares[0].points, self.squares[1].points)
+        if is_col:
+            self.squares[0].velocity = -norm * depth / 2
+            self.squares[1].velocity = norm * depth / 2
 
     def check_collision(self):
         self.check_collision_main_ball_obs_ball()
         self.check_collision_obs_ball_obs_ball()
         self.check_collision_ball_wall()
-        # self.che
+        self.check_collision_main_ball_square()
+        self.check_collision_sqares()
 
 
     #this function only calculates the force applyed by our mouse
