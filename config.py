@@ -27,4 +27,6 @@ rectangle_start = [(50,200),(400,50),(220,400),(430,500)]
 #square constraints
 square_width = 15
 squares_number = 2
+decoration_squares_number = 2
 squares_centers = np.array([[220.0, 400.0], [150.0, 400.0]])
+decoration_squares_centers = np.array([[215.0, 758.0], [370.0, 758.0]])

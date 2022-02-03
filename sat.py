@@ -78,8 +78,11 @@ def project_vetricies(vetricies, axis):
 
 def sat_polygon_circle(circle, polygon):
 
-    position_diff = np.array([circle.pos[0], polygon.center[0], circle.pos[1], polygon.center[1]])
-    min_distance = sys.maxsize
+    norm = np.array([0.0, 0.0])
+    depth = sys.maxsize
+    axis = np.array([0.0, 0.0])
+    axis_depth = 0.0
+
     for i in range(len(polygon.points)):
         vector_a = polygon.points[i]
         #%len(points1) is for the last iteration so we dont go out of range
@@ -92,7 +95,13 @@ def sat_polygon_circle(circle, polygon):
         min1, max1 = project_vetricies(polygon.points, axis)
         min2, max2 = project_circle(circle, axis)
         if min1 >= max2 or min2 >= max1:
-            return False
+            return False, None, None
+
+        #now we are starting colision resolution
+        axis_depth = min(max2 - min1, max1 - min2)
+        if axis_depth < depth:
+            depth = axis_depth
+            norm = axis
 
 
     closest_point = find_closest_point_of_polygon(circle.pos, polygon.points)
@@ -100,10 +109,56 @@ def sat_polygon_circle(circle, polygon):
     min1, max1 = project_vetricies(polygon.points, axis)
     min2, max2 = project_circle(circle, axis)
     if min1 >= max2 or min2 >= max1:
-        return False
+        return False, None, None
+    
+    #now we are starting colision resolution
+    axis_depth = min(max2 - min1, max1 - min2)
+    if axis_depth < depth:
+        depth = axis_depth
+        norm = axis
+
+    depth = depth / np.sqrt(norm[0]**2 + norm[1]**2)
+    #normalising the norm
+    norm[0] = norm[0] / np.sqrt(norm[0]**2 + norm[1]**2)
+    norm[1] = norm[1] / np.sqrt(norm[0]**2 + norm[1]**2)
+
+    center1 = circle.pos
+    center2 = polygon.center
+
+    direction = center2 - center1
+    if dot(direction, norm) < 0:
+        norm = - norm
+
+    return True, norm, depth
 
 
-    return True
+
+    # position_diff = np.array([circle.pos[0], polygon.center[0], circle.pos[1], polygon.center[1]])
+    # min_distance = sys.maxsize
+    # for i in range(len(polygon.points)):
+    #     vector_a = polygon.points[i]
+    #     #%len(points1) is for the last iteration so we dont go out of range
+    #     #and we create an edge from the last and the first point
+    #     vector_b = polygon.points[(i + 1) % len(polygon.points)]
+    #     edge = np.array([0.0, 0.0])
+    #     edge[0] = vector_b[0] - vector_a[0]
+    #     edge[1] = vector_b[1] - vector_a[1]
+    #     axis = np.array([edge[1], -edge[0]])
+    #     min1, max1 = project_vetricies(polygon.points, axis)
+    #     min2, max2 = project_circle(circle, axis)
+    #     if min1 >= max2 or min2 >= max1:
+    #         return False
+
+
+    # closest_point = find_closest_point_of_polygon(circle.pos, polygon.points)
+    # axis = polygon.points[closest_point] - circle.pos
+    # min1, max1 = project_vetricies(polygon.points, axis)
+    # min2, max2 = project_circle(circle, axis)
+    # if min1 >= max2 or min2 >= max1:
+    #     return False
+
+
+    # return True
 
 def project_circle(circle, axis):
 

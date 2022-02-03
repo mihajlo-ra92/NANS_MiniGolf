@@ -2,11 +2,11 @@ import numpy as np
 import config
 
 class Square():
-    def __init__(self, center):
+    def __init__(self, center, angular_vel = 0):
         self.center = center
         self.points = np.array([[self.center[0] - config.square_width, self.center[1] - config.square_width],[self.center[0] - config.square_width, self.center[1] + config.square_width],[self.center[0] + config.square_width, self.center[1] + config.square_width],[self.center[0] + config.square_width, self.center[1] - config.square_width]])
         self.angle = 0.0 #in degrees
-        self.angular_velocity = 0
+        self.angular_velocity = angular_vel
         self.velocity = np.array([0.0, 0.0])
         self.mass = 10.0
 
