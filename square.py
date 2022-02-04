@@ -2,9 +2,10 @@ import numpy as np
 import config
 
 class Square():
-    def __init__(self, center, angular_vel = 0):
+    def __init__(self, center, angular_vel = 0, width = config.square_width):
         self.center = center
-        self.points = np.array([[self.center[0] - config.square_width, self.center[1] - config.square_width],[self.center[0] - config.square_width, self.center[1] + config.square_width],[self.center[0] + config.square_width, self.center[1] + config.square_width],[self.center[0] + config.square_width, self.center[1] - config.square_width]])
+        self.width = width
+        self.points = np.array([[self.center[0] - self.width, self.center[1] - self.width],[self.center[0] - self.width, self.center[1] + self.width],[self.center[0] + self.width, self.center[1] + self.width],[self.center[0] + self.width, self.center[1] - self.width]])
         self.angle = 0.0 #in degrees
         self.angular_velocity = angular_vel
         self.velocity = np.array([0.0, 0.0])
@@ -14,15 +15,15 @@ class Square():
         self.velocity *= config.friction_coef
         self.center += self.velocity
         # as we move the center, we must move the points with it
-        self.points = np.array([[self.center[0] - config.square_width, self.center[1] - config.square_width],[self.center[0] - config.square_width, self.center[1] + config.square_width],[self.center[0] + config.square_width, self.center[1] + config.square_width],[self.center[0] + config.square_width, self.center[1] - config.square_width]])
+        self.points = np.array([[self.center[0] - self.width, self.center[1] - self.width],[self.center[0] - self.width, self.center[1] + self.width],[self.center[0] + self.width, self.center[1] + self.width],[self.center[0] + self.width, self.center[1] - self.width]])
         # self.angular_velocity *= config.friction_coef
         self.angle += self.angular_velocity
         self.rotate()
-        if (self.angular_velocity < config.min_velocity):
-            self.angular_velocity = 0
+        # if (self.angular_velocity < config.min_velocity):
+        #     self.angular_velocity = 0
 
-        if self.velocity[0]**2 + self.velocity[1]**2 < config.min_velocity**2:
-            self.velocity = np.array([0.0, 0.0])
+        # if self.velocity[0]**2 + self.velocity[1]**2 < config.min_velocity**2:
+        #     self.velocity = np.array([0.0, 0.0])
 
     def rotate(self):
         radAngle = self.angle * np.pi/180

@@ -17,7 +17,7 @@ while running:
         my_game.do_game()
     else:
         my_game.message_to_screen("Game over!", (240, 200))
-        my_game.message_to_screen("Score: " + str(math.floor(my_game.score)), (260, 250))
+        my_game.message_to_screen("Score: " + str(math.floor(my_game.score)), (258, 250))
         # my_game.message_to_screen("Press SPACE to play again", (180, 300), config.white)
 
         # restart_game = False

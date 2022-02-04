@@ -13,7 +13,7 @@ def pointOnLine(p, lP1, lP2):
     lineLen = lineLenght(lP1, lP2)
     dist1 = lineLenght(p, lP1)
     dist2 = lineLenght(p, lP2)
-    allowedError = 0.01 # stavljamo jer brojevi nisu u potpunosti tacni
+    allowedError = 0.1 # stavljamo jer brojevi nisu u potpunosti tacni
     if(dist1 + dist2 >= lineLen - allowedError and dist1 + dist2 <= lineLen + allowedError):
         return True
     else:

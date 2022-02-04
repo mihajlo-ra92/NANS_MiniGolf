@@ -27,6 +27,12 @@ class Ball():
     #decreases the velocity because of the friction and changes the 
     #position because of the velocity
     def update(self):
+        # if self.velocity[0] > 1.0:
+        #     self.velocity[0] = 1.0
+
+        # if self.velocity[1] > 1.0:
+        #     self.velocity[1] = 1.0
+
         self.velocity *= config.friction_coef
         self.pos += self.velocity
         #if the velocity is under the minimum velocity, we stop the ball

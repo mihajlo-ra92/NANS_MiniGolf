@@ -32,6 +32,7 @@ class Game:
         self.main_ball_force = np.array([0.0, 0.0])
         self.score = 0
         self.game_over = False
+        self.wall_corner_squares = self.create_wall_corner_squares()
         
         #title and icon
         pygame.display.set_caption("Mini golf")
@@ -65,6 +66,14 @@ class Game:
             squares.append(square.Square(config.squares_centers[i]))
         return squares
 
+    def create_wall_corner_squares(self):
+        squares = []
+        for i in range(config.wall_corner_squares_number):
+            squares.append(square.Square(config.wall_corner_squares_centers[i], 0, config.wall_width/2.0))
+        # for i in range(config.wall_corner_squares_number):
+        #     squares[i].center = np.array([15.0, 15.0])#config.wall_corner_squares_centers[i]
+        return squares
+
     def create_decoration_squares(self):
         decoration_squares = []
         for i in range(config.decoration_squares_number):
@@ -83,9 +92,12 @@ class Game:
         for i in range(config.squares_number):
             pygame.draw.polygon(self.screen, config.blue, self.squares[i].points)
 
-    def draw_rectangle(self):
-        for i in range(config.rectangle_number):
-            pygame.draw.rect(self.screen, config.rectangle_colour, (config.rectangle_start[i], config.rectangle_size))
+    def draw_wall_corner_squares(self):
+        for i in range(config.wall_corner_squares_number):
+            pygame.draw.polygon(self.screen, config.blue, self.wall_corner_squares[i].points)
+    # def draw_rectangle(self):
+    #     for i in range(config.rectangle_number):
+    #         pygame.draw.rect(self.screen, config.rectangle_colour, (config.rectangle_start[i], config.rectangle_size))
 
     def create_line_form_points(self,point1, point2):
         #line: a*y = b*x + c
@@ -100,9 +112,12 @@ class Game:
             wallLineC = point1[0]
         return wallLineA, wallLineB, wallLineC
 
-    def check_collision_ball_wall(self):
+    def check_collision_all_wall(self):
 
         for wall_it in self.walls.walls_list:
+
+            
+
 
 
             # is_coliding,_,_ = sat.sat_polygon_circle(self.main_ball, wall_it)
@@ -146,7 +161,7 @@ class Game:
                 if p1Lin[0] == p2Lin[0]:
                     linLen = line.lineLenght(p1Lin, p2Lin)
                     dot = ((self.main_ball.pos[0] - p1Lin[0])*(p2Lin[0] - p1Lin[0]) + (self.main_ball.pos[1] - p1Lin[1])*(p2Lin[1] - p1Lin[1])) / linLen**2
-                    closestX, closestY = line.findClosest(dot, p1Lin, p2Lin) #nz da li ovo ispradne np.array ili tuple pa sam za sad stavio ovako
+                    closestX, closestY = line.findClosest(dot, p1Lin, p2Lin)
                     closest = np.array([closestX, closestY])
                     if line.pointOnLine(closest, p1Lin, p2Lin) == True:
                         circleLineDist = line.lineLenght(self.main_ball.pos, closest)
@@ -165,10 +180,19 @@ class Game:
                                 obsBallIt.update()
                             
                     for square_it in self.squares:
-                        square_wall_col,_,_ = sat.sat_two_polygons(square_it.points, wall_it.points)
-                        if square_wall_col:
-                            square_it.velocity[0] *= -0.8
-                            square_it.update()
+                        # square_wall_col,_,_ = sat.sat_two_polygons(square_it.points, wall_it.points)
+                        # if square_wall_col:
+                        #     square_it.velocity[0] *= -0.8
+                        #     square_it.update()
+
+                        dot = ((square_it.center[0] - p1Lin[0])*(p2Lin[0] - p1Lin[0]) + (square_it.center[1] - p1Lin[1])*(p2Lin[1] - p1Lin[1])) / linLen**2
+                        closestX, closestY = line.findClosest(dot, p1Lin, p2Lin) #nz da li ovo ispradne np.array ili tuple pa sam za sad stavio ovako
+                        closest = np.array([closestX, closestY])
+                        if line.pointOnLine(closest, p1Lin, p2Lin) == True:
+                            squareLineDist = line.lineLenght(square_it.center, closest)
+                            if squareLineDist <= config.square_width:
+                                square_it.velocity[0] *= -0.8
+                                square_it.update()
                             
                     
 
@@ -196,10 +220,19 @@ class Game:
                                 obsBallIt.update()
 
                     for square_it in self.squares:
-                        square_wall_col,_,_ = sat.sat_two_polygons(square_it.points, wall_it.points)
-                        if square_wall_col:
-                            square_it.velocity[1] *= -0.8
-                            square_it.update()
+                        # square_wall_col,_,_ = sat.sat_two_polygons(square_it.points, wall_it.points)
+                        # if square_wall_col:
+                        #     square_it.velocity[1] *= -0.8
+                        #     square_it.update()
+                        dot = ((square_it.center[0] - p1Lin[0])*(p2Lin[0] - p1Lin[0]) + (square_it.center[1] - p1Lin[1])*(p2Lin[1] - p1Lin[1])) / linLen**2
+                        closestX, closestY = line.findClosest(dot, p1Lin, p2Lin) #nz da li ovo ispradne np.array ili tuple pa sam za sad stavio ovako
+                        closest = np.array([closestX, closestY])
+                        if line.pointOnLine(closest, p1Lin, p2Lin) == True:
+                            squareLineDist = line.lineLenght(square_it.center, closest)
+                            if squareLineDist <= config.square_width:
+                                square_it.velocity[1] *= -0.8
+                                square_it.update()
+
 
     def check_collision_main_ball_obs_ball(self):
         for ballIt in self.obs_balls:
@@ -285,16 +318,39 @@ class Game:
                         ballIt1.update()
                         ballIt2.velocity = reaction_vector_ball2
                         ballIt2.update()
-                        
 
-   
+    def check_collision_all_wall_corner(self):
+        for square_it in self.wall_corner_squares:
+                is_col, norm, depth = sat.sat_polygon_circle(self.main_ball, square_it)
+                if is_col:
+                    
+                    self.main_ball.velocity += -norm * depth / 2
+                    self.main_ball.velocity *= 0.8
+                    self.main_ball.update()
+
+                for ball_it in self.obs_balls:
+                    is_col, norm, depth = sat.sat_polygon_circle(ball_it, square_it)
+                    if is_col:
+                        ball_it.velocity += -norm * depth / 2
+                        ball_it.velocity *= 0.8
+                        ball_it.update()
+
+                for square_it2 in self.squares:
+                    is_col, norm, depth = sat.sat_two_polygons(square_it.points, square_it2.points)
+                    if is_col:
+                        square_it2.velocity += norm * depth / 2
+                        square_it2.velocity *= 0.8
+                        square_it2.update()
+
     def check_collision_main_ball_square(self):
         for square_it in self.squares:
             is_col, norm, depth = sat.sat_polygon_circle(self.main_ball, square_it)
             if is_col:
                 square_it.velocity += norm * depth / 2
+                square_it.velocity *= 0.8
                 square_it.update()
                 self.main_ball.velocity += -norm * depth / 2
+                self.main_ball.velocity *= 0.8
                 self.main_ball.update()
                 self.score += 0.5
         
@@ -304,8 +360,10 @@ class Game:
                 is_col, norm, depth = sat.sat_polygon_circle(ball_it, square_it)
                 if is_col:
                     square_it.velocity += norm * depth / 2
+                    square_it.velocity *= 0.8
                     square_it.update()
                     ball_it.velocity += -norm * depth / 2
+                    ball_it.velocity *= 0.8
                     ball_it.update()
 
     def check_collision_sqares(self):
@@ -315,14 +373,17 @@ class Game:
                     is_col, norm, depth = sat.sat_two_polygons(square_it1.points, square_it2.points)
                     if is_col:
                         square_it1.velocity += -norm * depth / 2
+                        square_it1.velocity *= 0.8
                         square_it1.update()
                         square_it2.velocity += norm * depth / 2
+                        square_it2.velocity *= 0.8
                         square_it2.update()
 
     def check_collision(self):
         self.check_collision_main_ball_obs_ball()
         self.check_collision_obs_ball_obs_ball()
-        self.check_collision_ball_wall()
+        self.check_collision_all_wall()
+        self.check_collision_all_wall_corner()
         self.check_collision_main_ball_square()
         self.check_collision_obs_ball_square()
         self.check_collision_sqares()
@@ -381,3 +442,4 @@ class Game:
         self.print_score()
         self.check_if_game_over()
         self.message_to_screen("END", (285, 684))
+        # self.draw_wall_corner_squares() #dont need to be drawn

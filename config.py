@@ -9,7 +9,7 @@ green = (0, 255, 0)
 blue = (0, 0, 255)
 
 #movement constants
-friction_coef = 0.997
+friction_coef = 0.995
 min_velocity = 0.09
 
 #ball constants
@@ -30,3 +30,10 @@ squares_number = 2
 decoration_squares_number = 2
 squares_centers = np.array([[220.0, 400.0], [150.0, 400.0]])
 decoration_squares_centers = np.array([[215.0, 758.0], [370.0, 758.0]])
+
+#wall
+wall_width = 15.0
+
+#wall corner squares
+wall_corner_squares_number = 6
+wall_corner_squares_centers = np.array([[85.0 + wall_width/2, 85.0 + wall_width/2], [500+wall_width/2, 85+wall_width/2], [500+wall_width/2, 600-wall_width/2], [330.0+wall_width/2, 200.0+wall_width/2], [280.0-wall_width/2, 700.0-wall_width/2], [330.0+wall_width/2, 700.0-wall_width/2]])
