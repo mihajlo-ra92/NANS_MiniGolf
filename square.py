@@ -10,6 +10,7 @@ class Square():
         self.angular_velocity = angular_vel
         self.velocity = np.array([0.0, 0.0])
         self.mass = 10.0
+        self.impulse = 0
 
     def update(self):
         self.velocity *= config.friction_coef
@@ -19,11 +20,8 @@ class Square():
         # self.angular_velocity *= config.friction_coef
         self.angle += self.angular_velocity
         self.rotate()
-        # if (self.angular_velocity < config.min_velocity):
-        #     self.angular_velocity = 0
-
-        # if self.velocity[0]**2 + self.velocity[1]**2 < config.min_velocity**2:
-        #     self.velocity = np.array([0.0, 0.0])
+        if self.center[1] > 700.0:
+            self.center[1] = 7000.0
 
     def rotate(self):
         radAngle = self.angle * np.pi/180

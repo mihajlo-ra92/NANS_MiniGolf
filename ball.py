@@ -9,6 +9,7 @@ class Ball():
         self.velocity = np.array([0.0, 0.0])
         self.start = np.array([50.0, 650.0])
         self.is_main = is_main
+        self.impulse = 0
         if(is_main):
             self.mass = 10.0
         else:
@@ -38,4 +39,6 @@ class Ball():
         #if the velocity is under the minimum velocity, we stop the ball
         if self.velocity[0]**2 + self.velocity[1]**2 < config.min_velocity**2: 
             self.velocity = np.array([0.0, 0.0])
+        if self.pos[1] > 700.0:
+            self.pos[1] = 5000.0
         

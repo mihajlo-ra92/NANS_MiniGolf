@@ -74,7 +74,7 @@ while running:
             #equal to the vector made form the point where the mouse was clicked
             #and the point where the mouse was unclicked
             if my_game.main_ball_clicked:
-                print("ball unclicked")
+                # print("ball unclicked")
                 my_game.calculate_main_ball_force()
                 print(f'force vector is: {my_game.main_ball_force}')
                 my_game.main_ball_clicked = False

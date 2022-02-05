@@ -95,10 +95,7 @@ class Game:
     def draw_wall_corner_squares(self):
         for i in range(config.wall_corner_squares_number):
             pygame.draw.polygon(self.screen, config.blue, self.wall_corner_squares[i].points)
-    # def draw_rectangle(self):
-    #     for i in range(config.rectangle_number):
-    #         pygame.draw.rect(self.screen, config.rectangle_colour, (config.rectangle_start[i], config.rectangle_size))
-
+    
     def create_line_form_points(self,point1, point2):
         #line: a*y = b*x + c
         if point1[0] - point2[0] != 0:
@@ -253,12 +250,17 @@ class Game:
                 collision_point_ball_it[0] = (self.main_ball.pos[0] - ballIt.pos[0]) / distance * ballIt.radius
                 collision_point_ball_it[1] = (self.main_ball.pos[1] - ballIt.pos[1]) / distance * ballIt.radius
 
-                reaction_vector_main_ball = np.array([0.0, 0.0])
-                reaction_vector_main_ball[0] = (ballIt.pos[0] - self.main_ball.pos[0]) - collision_point_main_ball[0] + collision_point_ball_it[0]
-                reaction_vector_main_ball[1] = (ballIt.pos[1] - self.main_ball.pos[1]) - collision_point_main_ball[1] + collision_point_ball_it[1]
-                reaction_vector_ball_it = np.array([0.0, 0.0])
-                reaction_vector_ball_it[0] = (self.main_ball.pos[0] - ballIt.pos[0] ) - collision_point_ball_it[0] + collision_point_main_ball[0]
-                reaction_vector_ball_it[1] = (self.main_ball.pos[1] - ballIt.pos[1] ) - collision_point_ball_it[1] + collision_point_main_ball[1]
+                reaction_vector_main_ball = np.array([(ballIt.pos[0] - self.main_ball.pos[0]) - collision_point_main_ball[0] + collision_point_ball_it[0], (ballIt.pos[1] - self.main_ball.pos[1]) - collision_point_main_ball[1] + collision_point_ball_it[1]])
+
+                # reaction_vector_main_ball = np.array([0.0, 0.0])
+                # reaction_vector_main_ball[0] = (ballIt.pos[0] - self.main_ball.pos[0]) - collision_point_main_ball[0] + collision_point_ball_it[0]
+                # reaction_vector_main_ball[1] = (ballIt.pos[1] - self.main_ball.pos[1]) - collision_point_main_ball[1] + collision_point_ball_it[1]
+                
+                reaction_vector_ball_it = np.array([(self.main_ball.pos[0] - ballIt.pos[0] ) - collision_point_ball_it[0] + collision_point_main_ball[0], (self.main_ball.pos[1] - ballIt.pos[1] ) - collision_point_ball_it[1] + collision_point_main_ball[1]])
+
+                # reaction_vector_ball_it = np.array([0.0, 0.0])
+                # reaction_vector_ball_it[0] = (self.main_ball.pos[0] - ballIt.pos[0] ) - collision_point_ball_it[0] + collision_point_main_ball[0]
+                # reaction_vector_ball_it[1] = (self.main_ball.pos[1] - ballIt.pos[1] ) - collision_point_ball_it[1] + collision_point_main_ball[1]
 
                 self.main_ball.velocity = reaction_vector_main_ball
                 self.main_ball.update()
@@ -307,12 +309,16 @@ class Game:
                         collision_point_ball2[0] = (ballIt1.pos[0] - ballIt2.pos[0]) / distance * ballIt2.radius
                         collision_point_ball2[1] = (ballIt1.pos[1] - ballIt2.pos[1]) / distance * ballIt2.radius
 
-                        reaction_vector_ball1 = np.array([0.0, 0.0])
-                        reaction_vector_ball1[0] = (ballIt2.pos[0] - ballIt1.pos[0]) - collision_point_ball1[0] + collision_point_ball2[0]
-                        reaction_vector_ball1[1] = (ballIt2.pos[1] - ballIt1.pos[1]) - collision_point_ball1[1] + collision_point_ball2[1]
-                        reaction_vector_ball2 = np.array([0.0, 0.0])
-                        reaction_vector_ball2[0] = (ballIt1.pos[0] - ballIt2.pos[0] ) - collision_point_ball2[0] + collision_point_ball1[0]
-                        reaction_vector_ball2[1] = (ballIt1.pos[1] - ballIt2.pos[1] ) - collision_point_ball2[1] + collision_point_ball1[1]
+                        reaction_vector_ball1 = np.array([(ballIt2.pos[0] - ballIt1.pos[0]) - collision_point_ball1[0] + collision_point_ball2[0], (ballIt2.pos[1] - ballIt1.pos[1]) - collision_point_ball1[1] + collision_point_ball2[1]])
+                        # reaction_vector_ball1 = np.array([0.0, 0.0])
+                        # reaction_vector_ball1[0] = (ballIt2.pos[0] - ballIt1.pos[0]) - collision_point_ball1[0] + collision_point_ball2[0]
+                        # reaction_vector_ball1[1] = (ballIt2.pos[1] - ballIt1.pos[1]) - collision_point_ball1[1] + collision_point_ball2[1]
+
+
+                        reaction_vector_ball2 = np.array([(ballIt1.pos[0] - ballIt2.pos[0] ) - collision_point_ball2[0] + collision_point_ball1[0], (ballIt1.pos[1] - ballIt2.pos[1] ) - collision_point_ball2[1] + collision_point_ball1[1]])
+                        # reaction_vector_ball2 = np.array([0.0, 0.0])
+                        # reaction_vector_ball2[0] = (ballIt1.pos[0] - ballIt2.pos[0] ) - collision_point_ball2[0] + collision_point_ball1[0]
+                        # reaction_vector_ball2[1] = (ballIt1.pos[1] - ballIt2.pos[1] ) - collision_point_ball2[1] + collision_point_ball1[1]
 
                         ballIt1.velocity = reaction_vector_ball1
                         ballIt1.update()
@@ -372,12 +378,34 @@ class Game:
                 if square_it1 != square_it2:
                     is_col, norm, depth = sat.sat_two_polygons(square_it1.points, square_it2.points)
                     if is_col:
+                        # square_it1.velocity = np.array([0.0, 0.0])
                         square_it1.velocity += -norm * depth / 2
                         square_it1.velocity *= 0.8
                         square_it1.update()
+                        # square_it2.velocity = np.array([0.0, 0.0])
                         square_it2.velocity += norm * depth / 2
                         square_it2.velocity *= 0.8
                         square_it2.update()
+
+        # if self.squares[0].center[1] < self.squares[1].center[1]:
+        #     is_col, norm, depth = sat.sat_two_polygons(self.squares[1].points, self.squares[0].points)
+        # else:
+        # is_col, norm, depth = sat.sat_two_polygons(self.squares[0].points, self.squares[1].points)
+        # if is_col:
+        #     if self.squares[0].center < self.squares[1].center:
+        #         self.squares[0].velocity += norm * depth / 2
+        #         self.squares[0].velocity *= 0.8
+        #         self.squares[0].update()
+        #         self.squares[1].velocity += -norm * depth / 2
+        #         self.squares[1].velocity *= 0.8
+        #         self.squares[1].update()
+        #     else:
+        #         self.squares[0].velocity += -norm * depth / 2
+        #         self.squares[0].velocity *= 0.8
+        #         self.squares[0].update()
+        #         self.squares[1].velocity += norm * depth / 2
+        #         self.squares[1].velocity *= 0.8
+        #         self.squares[1].update()
 
     def check_collision(self):
         self.check_collision_main_ball_obs_ball()
@@ -393,7 +421,13 @@ class Game:
     def calculate_main_ball_force(self):
         #force is calculated from ball centre not mouse down point because it works better when we click the edge of the ball 
         # self.main_ball_force = ((self.mouse_down[0] - self.mouse_up[0])/3, (self.mouse_down[1] - self.mouse_up[1])/3)
-        self.main_ball_force = ((self.main_ball.pos[0] - self.mouse_up[0])/3, (self.main_ball.pos[1] - self.mouse_up[1])/3)
+        self.main_ball_force = np.array([(self.main_ball.pos[0] - self.mouse_up[0])/3, (self.main_ball.pos[1] - self.mouse_up[1])/3])
+        while np.abs(self.main_ball_force[0]) > 85.0 or np.abs(self.main_ball_force[1]) > 85.0:
+            self.main_ball_force[0] *= 0.9
+            self.main_ball_force[1] *= 0.9
+
+        # if self.main_ball_force[1] > 25.0:
+        #     self.main_ball_force[1] = 25.0
 
     def read_mouse_down(self, mouse_down_pos):
         self.mouse_down = mouse_down_pos
