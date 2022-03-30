@@ -20,7 +20,7 @@ class Square():
         # self.angular_velocity *= config.friction_coef
         self.angle += self.angular_velocity
         self.rotate()
-        if self.center[1] > 700.0:
+        if self.center[1] > 700.0 and self.angular_velocity == 0.0:
             self.center[1] = 7000.0
 
     def rotate(self):
