@@ -457,7 +457,7 @@ class Game:
 
     def message_to_screen(self, message, cordinates, colour = config.red):
         pygame.font.init()
-        font = pygame.font.SysFont('Comic Sans MS', 30)
+        font = pygame.font.SysFont('Comic Sans MS', 20)
         text = font.render(message, True, colour)
         self.screen.blit(text, cordinates)
 
@@ -475,5 +475,5 @@ class Game:
         self.draw_aim_line()
         self.print_score()
         self.check_if_game_over()
-        self.message_to_screen("END", (285, 684))
+        self.message_to_screen("END", (285, 677))
         # self.draw_wall_corner_squares() #dont need to be drawn
