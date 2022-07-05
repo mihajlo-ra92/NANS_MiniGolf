@@ -1,6 +1,7 @@
 # NANS_MiniGolf
 
-Project in numerical algorithms and numerical software (NANS) in Faculty of Technical Sciences in Novi Sad, Serbia.
+Project in Numerical Algorithms and Numerical Software (NANS) in Faculty of Technical Sciences in Novi Sad, Serbia.
+
 Done by: Mihajlo Maksimovic, RA92/2019
 
 The project is written in Python using Numpy for mathematical calculations and Pygame for the GUI.
